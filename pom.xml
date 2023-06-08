@@ -54,6 +54,19 @@
             <artifactId>snakeyaml</artifactId>
             <version>[2.0,)</version>
         </dependency>
+
+        <!-- Requerido para trabajar con Spring Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- Requerido para trabajar con Thymeleaf Spring Security Tags -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+            <version>3.0.4.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
     <build>
