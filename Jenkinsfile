@@ -55,6 +55,26 @@ pipeline {
             }
         }
         
+        stage('Upload Artifact'){
+            steps{
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    nexusUrl: 'localhost:8081',
+                    groupId: 'QA',
+                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                    repository: 'nombre repositorio nexus', // Se debe cambiar
+                    credentialsId: 'NexusLogin', //nombre de credencial para nexus
+                    artifacts: [
+                        [artifactId: 'devops',
+                        classifier: '',
+                        file: 'target/devops-0.0.1-SNAPSHOT.jar',
+                        type: 'jar']
+                    ]
+                )
+            }
+        }
+        
         stage('Sonar Analysys'){
             steps{
                 echo 'Sonar Analysis'
