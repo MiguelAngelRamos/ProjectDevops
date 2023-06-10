@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    def COLOR_MAP = [
+    'SUCCESS': 'good', 
+    'FAILURE':'danger', 
+    ]
     
     tools {
         // Qué herramientas queremos utilizar
