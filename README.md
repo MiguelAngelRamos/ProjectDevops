@@ -108,5 +108,3 @@ Cualquier persona que desee contribuir a este proyecto es bienvenida. Las contri
 
 Este proyecto es de código abierto bajo la licencia [MIT](https://opensource.org/licenses/MIT).
 
-
-Recuerda reemplazar "yourusername" con tu nombre de usuario en GitHub y agrega o modifica cualquier sección que creas que es necesaria para tu proyecto.
