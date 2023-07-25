@@ -61,7 +61,7 @@ pipeline {
                     nexusUrl: 'http://devops-elgrupo.keberlabs.com:8081/',
                     groupId: 'QA',
                     version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                    repository: 'DevOpsRepository', 
+                    repository: 'proyecto-devops', 
                     credentialsId: 'nexus_admin', //nombre de credencial para nexus
                     artifacts: [
                         [artifactId: 'devops',
