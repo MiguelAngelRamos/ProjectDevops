@@ -6,7 +6,7 @@ pipeline {
     tools {
         // Qué herramientas queremos utilizar
         maven "mvn3"
-        jdk "Java17"
+        jdk "java17"
     }
     
     environment {
