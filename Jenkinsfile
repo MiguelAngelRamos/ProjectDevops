@@ -58,7 +58,7 @@ pipeline {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: 'http://devops-elgrupo.keberlabs.com:8081/',
+                    nexusUrl: 'devops-elgrupo.keberlabs.com:8081',
                     groupId: 'QA',
                     version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
                     repository: 'proyecto-devops', 
