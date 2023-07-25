@@ -32,14 +32,15 @@ pipeline {
         
         stage('Build con maven'){
             steps{
-                bat "mvn clean package -DskipTests"
-                // sh "mvn -Dmaven.test.failure.ignore=true clean package" // Unix
+                // bat "mvn clean package -DskipTests"
+                sh "mvn -Dmaven.test.failure.ignore=true clean package" // Unix
             }
         }
         
         stage('test maven'){
             steps{
-                bat "mvn test"
+                //bat "mvn test"
+                sh "mvn test"
             }
             
             post{
@@ -76,7 +77,8 @@ pipeline {
             steps{
                 echo 'Sonar Analysis'
                 withSonarQubeEnv('sonar'){
-                    bat "mvn clean package sonar:sonar"
+                    //bat "mvn clean package sonar:sonar"
+                    sh "mvn clean package sonar:sonar"
                 }
             }
         }
