@@ -5,8 +5,8 @@ pipeline {
     
     tools {
         // Qué herramientas queremos utilizar
-        maven "Maven3"
-        jdk "JDK17"
+        maven "mvn3"
+        jdk "Java17"
     }
     
     environment {
@@ -75,7 +75,7 @@ pipeline {
         stage('Sonar Analysys'){
             steps{
                 echo 'Sonar Analysis'
-                withSonarQubeEnv('Sonarqube'){
+                withSonarQubeEnv('sonar'){
                     bat "mvn clean package sonar:sonar"
                 }
             }
