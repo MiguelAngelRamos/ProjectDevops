@@ -60,7 +60,7 @@ pipeline {
                     protocol: 'http',
                     nexusUrl: 'nexus.devops-elgrupo.keberlabs.com',
                     groupId: 'QA',
-                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                    version: "${env.BUILD_ID}",
                     repository: 'proyecto-devops', 
                     credentialsId: 'nexus_admin', //nombre de credencial para nexus
                     artifacts: [
@@ -69,17 +69,37 @@ pipeline {
                         file: 'target/simple-springmvc-docker.jar',
                         type: 'jar']
                     ]
-                )
+                )        
             }
-        }
-        
-        stage('Sonar Analysys'){
+        }        
+
+        /*
+        stage('Sonar Analysis'){
             steps{
                 echo 'Sonar Analysis'
                 withSonarQubeEnv('sonar'){
                     //bat "mvn clean package sonar:sonar"
                     sh "mvn clean package sonar:sonar"
                 }
+            }
+        }
+        */
+
+        stage('Build Docker Image'){
+            steps{
+                def dockerfile = '''
+                    FROM openjdk:17-jdk-slim-bullseye
+                    RUN addgroup -system devopsc && useradd -G devopsc javams
+                    USER javams:devopsc
+                    ENV JAVA_OPTS=""                    
+                    COPY devops-${env.BUILD_ID}.jar /app.jar
+                    VOLUME /tmp
+                    EXPOSE 9090
+                    ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+                '''
+
+                writeFile file: 'Dockerfile', text: dockerfile
+                sh "docker build -t examenfinal:${DOCKER_IMAGE_TAG} ."
             }
         }
     }
