@@ -11,7 +11,7 @@ def dockerfile = """
                 """
 
 pipeline {
-    agent { dockerfile true } 
+    agent any
     
     tools {
         // Qué herramientas queremos utilizar
