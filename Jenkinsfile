@@ -75,7 +75,7 @@ pipeline {
                     nexusUrl: "${NEXUS_URL}",
                     groupId: "${NEXUS_GROUP_ID}",
                     version: "${env.BUILD_ID}",
-                    repository: ${NEXUS_REPOSITORY}, 
+                    repository: "${NEXUS_REPOSITORY}", 
                     credentialsId: 'nexus_admin', //nombre de credencial para nexus
                     artifacts: [
                         [artifactId: "${NEXUS_ARTIFACT_ID}",
