@@ -6,7 +6,7 @@ def dockerfile = """
                     COPY devops-${env.BUILD_ID}.jar /app.jar
                     VOLUME /tmp
                     EXPOSE 9090
-                    ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+                    ENTRYPOINT [ "sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
                 """
 
 pipeline {
