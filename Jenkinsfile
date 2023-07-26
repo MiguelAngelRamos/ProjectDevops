@@ -87,7 +87,7 @@ pipeline {
 
         stage('Build Docker Image'){
             steps{
-                def dockerfile = '''
+                def dockerfile = """
                     FROM openjdk:17-jdk-slim-bullseye
                     RUN addgroup -system devopsc && useradd -G devopsc javams
                     USER javams:devopsc
@@ -96,7 +96,7 @@ pipeline {
                     VOLUME /tmp
                     EXPOSE 9090
                     ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
-                '''
+                """
 
                 writeFile file: 'Dockerfile', text: dockerfile
                 sh "docker build -t examenfinal:${DOCKER_IMAGE_TAG} ."
