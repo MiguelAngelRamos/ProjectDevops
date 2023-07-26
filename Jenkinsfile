@@ -17,6 +17,7 @@ pipeline {
         NEXUS_URL = 'nexus.devops-elgrupo.keberlabs.com'
         NEXUS_REPOSITORY = 'proyecto-devops'
         NEXUS_GROUP_ID = 'QA'
+        NEXUS_ARTIFACT_URL = "https://${NEXUS_URL}/repository/${NEXUS_REPOSITORY}/${NEXUS_GROUP_ID}/${NEXUS_ARTIFACT_ID}/${env.BUILD_ID}/${NEXUS_ARTIFACT_ID}-${env.BUILD_ID}.jar"
     }
     
     stages {
@@ -25,6 +26,10 @@ pipeline {
                 echo "DB Engine is: ${DB_ENGINE}"
                 echo "DISABLE_AUTH is: ${DISABLE_AUTH}"
                 echo "Build ${env.BUILD_ID} on ${env.JENKINS_URL}"
+
+                slackSend channel: '#proyecto-final',
+                color: COLOR_MAP[currentBuild.currentResult],
+                message:"*${currentBuild.currentResult}: Exiting News! Starting Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
             }
         }   
         
@@ -56,6 +61,16 @@ pipeline {
                 }
             }
         }
+
+        stage('Sonar Analysis'){
+            steps{
+                echo 'Sonar Analysis'
+                withSonarQubeEnv('sonar'){
+                    //bat "mvn clean package sonar:sonar"
+                    sh "mvn clean package sonar:sonar"
+                }
+            }
+        }
         
         stage('Upload Artifact'){
             steps{
@@ -75,19 +90,15 @@ pipeline {
                     ]
                 )        
             }
-        }        
-
-        /*
-        stage('Sonar Analysis'){
-            steps{
-                echo 'Sonar Analysis'
-                withSonarQubeEnv('sonar'){
-                    //bat "mvn clean package sonar:sonar"
-                    sh "mvn clean package sonar:sonar"
+            post{
+                success{
+                    slackSend channel: '#proyecto-final',
+                    color: COLOR_MAP[currentBuild.currentResult],
+                    message:"*${currentBuild.currentResult}: Great news! Artifact uploaded to nexus ${NEXUS_ARTIFACT_URL}. Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
                 }
             }
         }
-        */
+        
 
         stage('Build Docker Image'){
             steps{
@@ -97,8 +108,7 @@ pipeline {
                     FROM openjdk:17-jdk-slim-bullseye
                     RUN addgroup -system devopsc && useradd -G devopsc javams
                     USER javams:devopsc
-                    ADD https://${NEXUS_URL}/repository/${NEXUS_REPOSITORY}/${NEXUS_GROUP_ID}/${NEXUS_ARTIFACT_ID}/${env.BUILD_ID}/${NEXUS_ARTIFACT_ID}-${env.BUILD_ID}.jar app.jar
-                    #COPY ${NEXUS_ARTIFACT_ID}-${env.BUILD_ID}.jar /app.jar
+                    ADD ${NEXUS_ARTIFACT_URL} app.jar                    
                     VOLUME /tmp
                     EXPOSE 9090
                     ENTRYPOINT [ "sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
@@ -107,9 +117,46 @@ pipeline {
               
               writeFile file: 'Dockerfile', text: dockerfile
               //sh "docker build -t examenfinal:${DOCKER_IMAGE_TAG} ."
-              sh "docker build -t examenfinal ."
+              sh "docker build -t keberflores/examenfinal ."
+            }
+            post{
+                success{
+                    slackSend channel: '#proyecto-final',
+                    color: COLOR_MAP[currentBuild.currentResult],
+                    message:"*${currentBuild.currentResult}: Awesome! Docker image built. Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
+                }
             }
         }
+
+        stage('Push Docker Image'){
+            steps{
+                sh "docker push keberflores/examenfinal:${env.BUILD_ID}"
+                //sh "docker push keberflores/examenfinal:latest"
+            }
+            post{
+                success{
+                    slackSend channel: '#proyecto-final',
+                    color: COLOR_MAP[currentBuild.currentResult],
+                    message:"*${currentBuild.currentResult}: Hello World! Docker image online at https://hub.docker.com/repository/docker/keberflores/targetapp/general . Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
+                }
+            }
+        }
+
+        /* WIP
+        stage('Deploy App'){
+            steps{
+                sh "docker pull keberflores/examenfinal:latest"
+                sh "docker run -p keberflores/examenfinal:latest
+            }
+            post{
+                success{
+                    slackSend channel: '#proyecto-final',
+                    color: COLOR_MAP[currentBuild.currentResult],
+                    message:"*${currentBuild.currentResult}: Hello World! Docker image online. Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
+                }
+            }
+        }
+        */
     }
     
     post {
