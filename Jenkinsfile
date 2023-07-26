@@ -66,7 +66,7 @@ pipeline {
                     artifacts: [
                         [artifactId: 'devops',
                         classifier: '',
-                        file: 'target/devops-0.0.1-SNAPSHOT.jar',
+                        file: 'target/simple-springmvc-docker.jar',
                         type: 'jar']
                     ]
                 )
