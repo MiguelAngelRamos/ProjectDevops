@@ -97,7 +97,8 @@ pipeline {
         stage('Build Docker Image'){
             steps{
                 writeFile file: 'Dockerfile', text: dockerfile
-                sh "docker build -t examenfinal:${DOCKER_IMAGE_TAG} ."
+                //sh "docker build -t examenfinal:${DOCKER_IMAGE_TAG} ."
+              sh "docker build -t examenfinal ."
             }
         }
     }
