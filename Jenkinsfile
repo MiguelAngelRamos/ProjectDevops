@@ -3,7 +3,8 @@ def dockerfile = """
                     FROM openjdk:17-jdk-slim-bullseye
                     RUN addgroup -system devopsc && useradd -G devopsc javams
                     USER javams:devopsc
-                    COPY devops-${env.BUILD_ID}.jar /app.jar
+                    RUN curl --output ${NEXUS_ARTIFACT_ID}-${env.BUILD_ID}.jar https://${NEXUS_URL}/repository/${NEXUS_REPOSITORY}/${NEXUS_GROUP_ID}/${env.BUILD_ID}/${NEXUS_ARTIFACT_ID}-${env.BUILD_ID}.jar
+                    COPY ${NEXUS_ARTIFACT_ID}-${env.BUILD_ID}.jar /app.jar
                     VOLUME /tmp
                     EXPOSE 9090
                     ENTRYPOINT [ "sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
@@ -22,6 +23,10 @@ pipeline {
         NEXUS_VERSION = "nexus3"
         DISABLE_AUTH = 'true'
         DB_ENGINE = 'sqlite'
+        NEXUS_ARTIFACT_ID = 'targetApp'
+        NEXUS_URL = 'nexus.devops-elgrupo.keberlabs.com'
+        NEXUS_REPOSITORY = 'proyecto-devops'
+        NEXUS_GROUP_ID = 'QA'
     }
     
     stages {
@@ -67,13 +72,13 @@ pipeline {
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: 'nexus.devops-elgrupo.keberlabs.com',
-                    groupId: 'QA',
+                    nexusUrl: "${NEXUS_URL}",
+                    groupId: "${NEXUS_GROUP_ID}",
                     version: "${env.BUILD_ID}",
-                    repository: 'proyecto-devops', 
+                    repository: ${NEXUS_REPOSITORY}, 
                     credentialsId: 'nexus_admin', //nombre de credencial para nexus
                     artifacts: [
-                        [artifactId: 'devops',
+                        [artifactId: "${NEXUS_ARTIFACT_ID}",
                         classifier: '',
                         file: 'target/simple-springmvc-docker.jar',
                         type: 'jar']
