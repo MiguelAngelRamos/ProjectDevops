@@ -153,7 +153,7 @@ pipeline {
             steps{
                 // stops and removes a prevoious version of container if exists.
                 // ref: https://stackoverflow.com/questions/34228864/stop-and-delete-docker-container-if-its-running#:~:text=To%20avoid%20the%20filter%20affecting%20the%20overall%20command%20return%20code%2C%20you%20could%20refactor%20it
-                sh "if docker ps -qa --filter "name=app_proyectofinal" | grep -q . ; then docker stop app_proyectofinal && docker rm -fv app_proyectofinal;fi"
+                sh "if docker ps -qa --filter 'name=app_proyectofinal' | grep -q . ; then docker stop app_proyectofinal && docker rm -fv app_proyectofinal;fi"
                 sh "docker pull keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
                 sh "docker run -d -p9090:9090 --name app_proyectofinal keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
             }
