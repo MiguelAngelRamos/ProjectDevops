@@ -154,7 +154,7 @@ pipeline {
                 sh "docker stop app_proyectofinal"
                 sh "docker rm app_proyectofinal"
                 sh "docker pull keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
-                sh "docker run -d -p9090:9090 -name app_proyectofinal keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
+                sh "docker run -d -p9090:9090 --name app_proyectofinal keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
             }
             post{
                 success{
