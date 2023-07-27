@@ -138,15 +138,13 @@ pipeline {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                 sh "docker push keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
                 sh "docker push keberflores/${DOCKER_IMAGE_NAME}:latest"
+                sh 'docker logout'
             }
             post{
                 success{
                     slackSend channel: '#proyecto-final',
                     color: COLOR_MAP[currentBuild.currentResult],
                     message:"*${currentBuild.currentResult}: Success! Docker image available at https://hub.docker.com/repository/docker/keberflores/${DOCKER_IMAGE_NAME}/general . Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
-                }
-                always{
-                    sh 'docker logout'
                 }
             }
         }
