@@ -110,7 +110,7 @@ pipeline {
                     FROM openjdk:17-jdk-slim-bullseye
                     RUN addgroup -system devopsc && useradd -G devopsc javams
                     USER javams:devopsc
-                    ADD ${NEXUS_ARTIFACT_URL} app.jar                    
+                    ADD ${NEXUS_ARTIFACT_URL} /app.jar                    
                     VOLUME /tmp
                     EXPOSE 9090
                     ENTRYPOINT [ "sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
