@@ -137,13 +137,13 @@ pipeline {
             steps{
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                 sh "docker push keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
-                //sh "docker push keberflores/${DOCKER_IMAGE_NAME}:latest"
+                sh "docker push keberflores/${DOCKER_IMAGE_NAME}:latest"
             }
             post{
                 success{
                     slackSend channel: '#proyecto-final',
                     color: COLOR_MAP[currentBuild.currentResult],
-                    message:"*${currentBuild.currentResult}: Hello World! Docker image online at https://hub.docker.com/repository/docker/keberflores/${DOCKER_IMAGE_NAME}/general . Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
+                    message:"*${currentBuild.currentResult}: Success! Docker image available at https://hub.docker.com/repository/docker/keberflores/${DOCKER_IMAGE_NAME}/general . Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
                 }
                 always{
                     sh 'docker logout'
@@ -151,21 +151,21 @@ pipeline {
             }
         }
 
-        /* WIP
         stage('Deploy App'){
             steps{
-                sh "docker pull keberflores/${DOCKER_IMAGE_NAME}:latest"
-                sh "docker run -p keberflores/${DOCKER_IMAGE_NAME}:latest"
+                sh "docker stop app_proyectofinal"
+                sh "docker rm app_proyectofinal"
+                sh "docker pull keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
+                sh "docker run -d -p9090:9090 -name app_proyectofinal keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID}"
             }
             post{
                 success{
                     slackSend channel: '#proyecto-final',
                     color: COLOR_MAP[currentBuild.currentResult],
-                    message:"*${currentBuild.currentResult}: Hello World! Docker image online. Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
+                    message:"*${currentBuild.currentResult}: Hello World! Docker image live online at https://app.devops-elgrupo.keberlabs.com .  Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
                 }
             }
         }
-        */
     }
     
     post {
