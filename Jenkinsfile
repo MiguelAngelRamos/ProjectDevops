@@ -118,8 +118,8 @@ pipeline {
               }
               
               writeFile file: 'Dockerfile', text: dockerfile
-              sh "docker build -t keberflores/examenfinal:${env.BUILD_ID} ."
-              //sh "docker build -t keberflores/examenfinal ."
+              sh "docker build -t keberflores/${DOCKER_IMAGE_NAME}:${env.BUILD_ID} ."
+              //sh "docker build -t keberflores/${DOCKER_IMAGE_NAME} ."
             }
             post{
                 success{
