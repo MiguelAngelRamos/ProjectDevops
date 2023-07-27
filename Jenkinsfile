@@ -19,6 +19,7 @@ pipeline {
         NEXUS_GROUP_ID = 'QA'
         NEXUS_ARTIFACT_URL = "https://${NEXUS_URL}/repository/${NEXUS_REPOSITORY}/${NEXUS_GROUP_ID}/${NEXUS_ARTIFACT_ID}/${env.BUILD_ID}/${NEXUS_ARTIFACT_ID}-${env.BUILD_ID}.jar"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-keber')
+        DOCKER_IMAGE_NAME = 'proyectofinal'
     }
     
     stages {
@@ -132,14 +133,14 @@ pipeline {
         stage('Push Docker Image'){
             steps{
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh "docker push keberflores/examenfinal:${env.BUILD_ID}"
-                //sh "docker push keberflores/examenfinal:latest"
+                sh "docker push keberflores/${DOCKER_IMAGE_NAME}l:${env.BUILD_ID}"
+                //sh "docker push keberflores/${DOCKER_IMAGE_NAME}:latest"
             }
             post{
                 success{
                     slackSend channel: '#proyecto-final',
                     color: COLOR_MAP[currentBuild.currentResult],
-                    message:"*${currentBuild.currentResult}: Hello World! Docker image online at https://hub.docker.com/repository/docker/keberflores/targetapp/general . Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
+                    message:"*${currentBuild.currentResult}: Hello World! Docker image online at https://hub.docker.com/repository/docker/keberflores/${DOCKER_IMAGE_NAME}/general . Ready to go live? Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n"
                 }
                 always{
                     sh 'docker logout'
@@ -150,8 +151,8 @@ pipeline {
         /* WIP
         stage('Deploy App'){
             steps{
-                sh "docker pull keberflores/examenfinal:latest"
-                sh "docker run -p keberflores/examenfinal:latest
+                sh "docker pull keberflores/${DOCKER_IMAGE_NAME}:latest"
+                sh "docker run -p keberflores/${DOCKER_IMAGE_NAME}:latest
             }
             post{
                 success{
